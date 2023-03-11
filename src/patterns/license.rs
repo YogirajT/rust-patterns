@@ -31,6 +31,10 @@ impl LicenseProcess {
         &self.name
     }
 
+    pub fn get_license_type(&self) -> &License {
+        &self.license_type
+    }
+
     pub fn submit_id_proof(&mut self, name: &str) {
         if self.name.is_empty() {
             if let Some(state) = self.state.take() {
