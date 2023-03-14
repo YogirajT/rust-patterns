@@ -2,6 +2,8 @@
 
 use std::sync::{Arc, Mutex};
 
+use lazy_static::lazy_static;
+
 struct Counter {
     count: i32,
 }
@@ -20,7 +22,7 @@ impl Counter {
     }
 }
 
-lazy_static::lazy_static! {
+lazy_static! {
     static ref COUNTER_SINGLETON: Arc<Mutex<Counter>> = Arc::new(Mutex::new(Counter::new()));
 }
 
