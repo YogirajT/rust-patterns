@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 static SP_MESSAGE: &str = "Specific request";
 trait TargetTrait {
     fn approve(&self) -> String;

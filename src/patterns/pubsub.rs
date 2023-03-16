@@ -1,10 +1,10 @@
+#![allow(dead_code)]
 use std::collections::HashMap;
 
-type Topic = String;
-type Message = String;
+struct SubscriberFunctions(Box<dyn FnMut(&str)>);
 
 struct YoutubeChannel {
-    subscribers: HashMap<Topic, Vec<Box<dyn FnMut(&Message)>>>,
+    subscribers: HashMap<String, Vec<SubscriberFunctions>>,
 }
 
 impl YoutubeChannel {
@@ -14,24 +14,24 @@ impl YoutubeChannel {
         }
     }
 
-    fn subscribe<T>(&mut self, topic: Topic, mut subscriber: T)
+    fn subscribe<T>(&mut self, topic: String, subscriber: T)
     where
-        T: FnMut(&Message) + 'static,
+        T: FnMut(&str) + 'static,
     {
         self.subscribers
             .entry(topic)
             .or_insert_with(Vec::new)
-            .push(Box::new(subscriber));
+            .push(SubscriberFunctions(Box::new(subscriber)));
     }
 }
 
 struct Publisher {}
 
 impl Publisher {
-    fn publish(&mut self, topic: Topic, message: Message, channel: &mut YoutubeChannel) {
+    fn publish(&self, topic: String, message: String, channel: &mut YoutubeChannel) {
         if let Some(subscribers) = channel.subscribers.get_mut(&topic) {
             for subscriber in subscribers {
-                subscriber(&message);
+                subscriber.0(&message);
             }
         }
     }
@@ -55,7 +55,7 @@ mod pubsub_tests {
             assert_eq!(msg2, message)
         });
 
-        let mut publisher = Publisher {};
+        let publisher = Publisher {};
         publisher.publish("topic_a".to_string(), msg1.to_string(), &mut yt_channel);
         publisher.publish("topic_b".to_string(), msg2.to_string(), &mut yt_channel);
     }

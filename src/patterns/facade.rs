@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 struct ComplexWorkflow1 {}
 
 trait WorkflowTrait {
