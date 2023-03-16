@@ -25,15 +25,15 @@ fn parse_value(chars: &mut std::iter::Peekable<std::str::Chars>) -> Option<JsonV
 
 fn parse_object(chars: &mut std::iter::Peekable<std::str::Chars>) -> Option<JsonValue> {
     let mut object = HashMap::new();
-    chars.next(); // consume the opening brace
+    chars.next();
     loop {
         match chars.peek() {
             Some('}') => {
-                chars.next(); // consume the closing brace
+                chars.next();
                 return Some(JsonValue::Object(object));
             }
             Some(',') => {
-                chars.next(); // consume the comma
+                chars.next();
             }
             Some(_) => {
                 let key = match parse_string(chars) {
@@ -55,7 +55,7 @@ fn parse_object(chars: &mut std::iter::Peekable<std::str::Chars>) -> Option<Json
 }
 
 fn parse_string(chars: &mut std::iter::Peekable<std::str::Chars>) -> Option<JsonValue> {
-    chars.next(); // consume the opening quote
+    chars.next();
     let mut s = String::new();
     loop {
         match chars.next()? {
@@ -91,15 +91,15 @@ fn parse_string(chars: &mut std::iter::Peekable<std::str::Chars>) -> Option<Json
 
 fn parse_array(chars: &mut std::iter::Peekable<std::str::Chars>) -> Option<JsonValue> {
     let mut array = Vec::new();
-    chars.next(); // consume the opening bracket
+    chars.next();
     loop {
         match chars.peek() {
             Some(']') => {
-                chars.next(); // consume the closing bracket
+                chars.next();
                 return Some(JsonValue::Array(array));
             }
             Some(',') => {
-                chars.next(); // consume the comma
+                chars.next();
             }
             Some(_) => match parse_value(chars) {
                 Some(value) => array.push(value),

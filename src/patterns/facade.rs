@@ -50,7 +50,7 @@ impl<'a> Facade<'a> {
 }
 
 #[cfg(test)]
-mod builder_tests {
+mod facade_tests {
     use super::{ComplexWorkflow1, ComplexWorkflow2, Facade};
 
     #[test]

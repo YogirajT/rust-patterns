@@ -32,7 +32,7 @@ impl<'a> TargetTrait for Adapter<'a> {
 }
 
 #[cfg(test)]
-mod builder_tests {
+mod adapter_tests {
     use crate::patterns::adapter::{
         AdapteeTrait, Adapter, ConcreteAdaptee, TargetTrait, SP_MESSAGE,
     };
