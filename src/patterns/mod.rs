@@ -2,6 +2,7 @@ pub mod adapter;
 pub mod builder;
 pub mod facade;
 pub mod factory;
+pub mod iterator;
 pub mod license;
 pub mod pubsub;
 pub mod singleton;
