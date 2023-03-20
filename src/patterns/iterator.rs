@@ -1,139 +1,84 @@
 #![allow(dead_code)]
 
-use std::{cmp::Ordering, collections::VecDeque};
-
-struct Node<T: Ord> {
-    left_kid: Option<Box<Node<T>>>,
-    right_kid: Option<Box<Node<T>>>,
-    value: T,
+#[derive(PartialEq, Debug)]
+struct Node<'a, T: Ord + Copy> {
+    value: &'a T,
+    left_kid: Option<Box<Node<'a, T>>>,
+    right_kid: Option<Box<Node<'a, T>>>,
 }
 
-struct BinaryTree<T: Ord> {
-    root: Option<Box<Node<T>>>,
-}
-
-impl<T: Ord> Node<T> {
-    fn new(value: T) -> Self {
-        Self {
-            value,
-            left_kid: None,
-            right_kid: None,
+impl<'a, T: Ord + Copy> Node<'a, T> {
+    fn add(&mut self, new_val: &'a T) {
+        if self.value == new_val {
+            return;
         }
-    }
-
-    fn add(&mut self, value: T) {
-        match value.cmp(&self.value) {
-            Ordering::Less => {
-                if let Some(ref mut left_kid) = self.left_kid {
-                    left_kid.add(value);
-                } else {
-                    self.left_kid = Some(Box::new(Node::new(value)));
-                }
-            }
-            Ordering::Greater => {
-                if let Some(ref mut right_kid) = self.right_kid {
-                    right_kid.add(value);
-                } else {
-                    self.right_kid = Some(Box::new(Node::new(value)));
-                }
-            }
-            Ordering::Equal => {}
-        }
-    }
-
-    fn find(&self, value: &T) -> bool {
-        match value.cmp(&self.value) {
-            Ordering::Less => {
-                if let Some(ref left_kid) = self.left_kid {
-                    left_kid.find(value)
-                } else {
-                    false
-                }
-            }
-            Ordering::Greater => {
-                if let Some(ref right_kid) = self.right_kid {
-                    right_kid.find(value)
-                } else {
-                    false
-                }
-            }
-            Ordering::Equal => true,
-        }
-    }
-}
-
-impl<T: Ord> BinaryTree<T> {
-    fn new() -> Self {
-        Self { root: None }
-    }
-
-    fn insert(&mut self, value: T) {
-        if let Some(ref mut root) = self.root {
-            root.add(value);
+        let target_node = if new_val < self.value {
+            &mut self.left_kid
         } else {
-            self.root = Some(Box::new(Node::new(value)));
-        }
-    }
-
-    fn contains(&self, value: &T) -> bool {
-        match self.root {
-            Some(ref root) => root.find(value),
-            None => false,
-        }
-    }
-}
-
-fn build_tree() -> BinaryTree<i32> {
-    let mut tree = BinaryTree::new();
-    tree.insert(1);
-    tree.insert(3);
-    tree.insert(2);
-    tree.insert(4);
-    tree.insert(9);
-    tree.insert(8);
-    tree.insert(7);
-
-    tree
-}
-
-impl<T: Ord> IntoIterator for BinaryTreeIterator<T> {
-    type Item = T;
-    type IntoIter = BinaryTreeIterator<T>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        BinaryTreeIterator {
-            stack: VecDeque::from(vec![self]),
+            &mut self.right_kid
+        };
+        match target_node {
+            &mut Some(ref mut subnode) => subnode.add(new_val),
+            &mut None => {
+                let new_node = Node {
+                    value: new_val,
+                    left_kid: None,
+                    right_kid: None,
+                };
+                let boxed_node = Some(Box::new(new_node));
+                *target_node = boxed_node;
+            }
+            Some(_) => todo!(),
         }
     }
 }
 
-struct BinaryTreeIterator<T: Ord> {
-    stack: VecDeque<BinaryTree<T>>,
-}
-
-impl<T: Ord> Iterator for BinaryTree<T> {
+impl<'a, T: Ord + Copy> Iterator for Node<'a, T> {
     type Item = T;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if let Some(node) = self.stack.pop_front() {
-            if let Some(right) = node.right {
-                self.stack.push_front(*right);
+        // traverse left subtree first, if it exists
+        if let Some(left) = &mut self.left_kid {
+            if let Some(value) = left.next() {
+                return Some(value);
             }
-            if let Some(left) = node.left {
-                self.stack.push_front(*left);
-            }
-            Some(node.data)
-        } else {
-            None
         }
+
+        // traverse right subtree next, if it exists
+        if let Some(right) = &mut self.right_kid {
+            if let Some(value) = right.next() {
+                return Some(value);
+            }
+        }
+
+        // no more values to iterate over
+        None
     }
 }
+
 #[cfg(test)]
 mod iterator_tests {
-    use super::build_tree;
+    use super::Node;
 
     #[test]
     fn test_iterator() {
-        let tree = build_tree();
+        let mut tree = Node {
+            value: &5,
+            left_kid: None,
+            right_kid: None,
+        };
+        tree.add(&1);
+        tree.add(&3);
+        tree.add(&2);
+        tree.add(&4);
+        tree.add(&9);
+        tree.add(&8);
+        tree.add(&7);
+
+        println!("{tree:#?}");
+
+        for value in tree {
+            println!("{value}");
+        }
     }
 }
