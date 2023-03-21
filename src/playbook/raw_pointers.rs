@@ -12,7 +12,7 @@ struct FooUsingNonNull {
 }
 
 #[cfg(test)]
-mod facade_tests {
+mod raw_pointer_tests {
     use std::{mem, ptr::NonNull};
 
     use crate::playbook::raw_pointers::{Foo, FooUsingNonNull};
