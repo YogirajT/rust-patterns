@@ -1,5 +1,4 @@
-use std::ops::{Add, Mul, Rem, Sub};
-
+#![allow(dead_code)]
 use num::Num;
 
 struct Context<T> {
