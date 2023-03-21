@@ -76,7 +76,7 @@ mod iterator_tests {
 
     use super::Node;
 
-    fn test_setup() -> (Vec<i32>, Vec<i32>) {
+    fn get_inputs() -> (Vec<i32>, Vec<i32>) {
         let sorted_answers = &vec![1, 2, 3, 4, 5, 6, 7, 8, 9];
         let mut clone = sorted_answers.clone();
 
@@ -84,19 +84,24 @@ mod iterator_tests {
         (sorted_answers.to_vec(), clone)
     }
 
-    #[test]
-    fn test_iterator() {
-        let (sorted_answers, clone) = test_setup();
-
+    fn generate_tree(clone: &Vec<i32>) -> Node<i32> {
         let mut tree = Node {
             value: &5,
             left_kid: None,
             right_kid: None,
         };
 
-        for value in &clone {
+        for value in clone {
             tree.add(value);
         }
+        tree
+    }
+
+    #[test]
+    fn test_iterator() {
+        let (sorted_answers, clone) = get_inputs();
+
+        let tree = generate_tree(&clone);
 
         for (count, value) in tree.iter_inorder().enumerate() {
             assert_eq!(*value, sorted_answers[count]);
@@ -105,22 +110,14 @@ mod iterator_tests {
 
     #[test]
     fn test_find() {
-        let (_sorted_answers, clone) = test_setup();
+        let (_sorted_answers, clone) = get_inputs();
 
-        let mut tree = Node {
-            value: &5,
-            left_kid: None,
-            right_kid: None,
-        };
-
-        for value in &clone {
-            tree.add(value);
-        }
+        let tree = generate_tree(&clone);
 
         assert_eq!(None, Some(tree.find(&11)).unwrap());
 
         let node = tree.find(&2).unwrap();
 
-        assert_eq!(&7, node.value);
+        assert_eq!(&2, node.value);
     }
 }
