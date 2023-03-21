@@ -1,4 +1,5 @@
 #![allow(dead_code)]
+use std::cmp::Ordering;
 
 #[derive(PartialEq, Debug)]
 struct Node<'a, T: Ord + Copy> {
@@ -12,14 +13,14 @@ impl<'a, T: Ord + Copy> Node<'a, T> {
         if self.value == new_val {
             return;
         }
-        let target_node = if new_val < self.value {
+        let target_node = if self.value > new_val {
             &mut self.left_kid
         } else {
             &mut self.right_kid
         };
         match target_node {
-            &mut Some(ref mut subnode) => subnode.add(new_val),
-            &mut None => {
+            Some(ref mut subnode) => subnode.add(new_val),
+            None => {
                 let new_node = Node {
                     value: new_val,
                     left_kid: None,
@@ -28,57 +29,98 @@ impl<'a, T: Ord + Copy> Node<'a, T> {
                 let boxed_node = Some(Box::new(new_node));
                 *target_node = boxed_node;
             }
-            Some(_) => todo!(),
+        }
+    }
+
+    fn find(&self, value: &T) -> Option<&Node<T>> {
+        match self.value.partial_cmp(value) {
+            Some(Ordering::Equal) => Some(self),
+            Some(Ordering::Less) => self.right_kid.as_ref().and_then(|node| node.find(value)),
+            Some(Ordering::Greater) => self.left_kid.as_ref().and_then(|node| node.find(value)),
+            None => None,
+        }
+    }
+
+    fn iter_inorder(&self) -> InOrderIterator<'_, T> {
+        InOrderIterator {
+            next: Some(self),
+            stack: Vec::new(),
         }
     }
 }
 
-impl<'a, T: Ord + Copy> Iterator for Node<'a, T> {
-    type Item = T;
+struct InOrderIterator<'a, T: Ord + Copy> {
+    next: Option<&'a Node<'a, T>>,
+    stack: Vec<Option<&'a Node<'a, T>>>,
+}
+
+impl<'a, T: Ord + Copy + 'a> Iterator for InOrderIterator<'a, T> {
+    type Item = &'a T;
 
     fn next(&mut self) -> Option<Self::Item> {
-        // traverse left subtree first, if it exists
-        if let Some(left) = &mut self.left_kid {
-            if let Some(value) = left.next() {
-                return Some(value);
-            }
+        while let Some(node) = self.next {
+            self.stack.push(Some(node));
+            self.next = node.left_kid.as_deref();
         }
 
-        // traverse right subtree next, if it exists
-        if let Some(right) = &mut self.right_kid {
-            if let Some(value) = right.next() {
-                return Some(value);
-            }
-        }
+        let next_node = self.stack.pop()?.unwrap();
+        self.next = next_node.right_kid.as_deref();
 
-        // no more values to iterate over
-        None
+        Some(next_node.value)
     }
 }
 
 #[cfg(test)]
 mod iterator_tests {
+    use rand::seq::SliceRandom;
+
     use super::Node;
+
+    fn test_setup() -> (Vec<i32>, Vec<i32>) {
+        let sorted_answers = &vec![1, 2, 3, 4, 5, 6, 7, 8, 9];
+        let mut clone = sorted_answers.clone();
+
+        clone.shuffle(&mut rand::thread_rng());
+        (sorted_answers.to_vec(), clone)
+    }
 
     #[test]
     fn test_iterator() {
+        let (sorted_answers, clone) = test_setup();
+
         let mut tree = Node {
             value: &5,
             left_kid: None,
             right_kid: None,
         };
-        tree.add(&1);
-        tree.add(&3);
-        tree.add(&2);
-        tree.add(&4);
-        tree.add(&9);
-        tree.add(&8);
-        tree.add(&7);
 
-        println!("{tree:#?}");
-
-        for value in tree {
-            println!("{value}");
+        for value in &clone {
+            tree.add(value);
         }
+
+        for (count, value) in tree.iter_inorder().enumerate() {
+            assert_eq!(*value, sorted_answers[count]);
+        }
+    }
+
+    #[test]
+    fn test_find() {
+        let (_sorted_answers, clone) = test_setup();
+
+        let mut tree = Node {
+            value: &5,
+            left_kid: None,
+            right_kid: None,
+        };
+
+        for value in &clone {
+            tree.add(value);
+        }
+
+        assert_eq!(None, Some(tree.find(&11)).unwrap());
+
+        let node = tree.find(&2).unwrap();
+
+        assert_eq!(&7, node.value);
     }
 }
