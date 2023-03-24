@@ -30,3 +30,14 @@ Pros
 
 Cons
 - Code repetition as we try to perform the same operation while chanding from one state to another (which can be reduced using macros).
+
+
+## Folder Structure
+
+
+|  |  |  |  |  |
+| ------ | ------ | ------ | ------ | ------ |
+| \src  |   |
+|   | \playbook  | Testing Rust's language specific magic |
+|   |  | simd.rs | SIMD vendor specific optimizations for vector processing vs auto-vectorization |
+|   |  | strtok.rs | In place string manipulation, why it breaks rust and workarounds  |
