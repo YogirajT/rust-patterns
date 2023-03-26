@@ -29,15 +29,15 @@
 //     dbg!(&a); // has been moved
 // }
 
-struct unrelated_struct {}
+struct UnrelatedStruct {}
 
 pub fn exec() {
     let mut a = vec![];
     let mut b = vec![];
 
-    let _unrelated_var = unrelated_struct {};
+    let _unrelated_var = UnrelatedStruct {};
 
-    let mut f = || {
+    let f = || {
         let _unrelated_var = _unrelated_var; // this stops the error as the Closure no longer implements FnMut?
         a.push(1);
         b.push(a.last().unwrap());
