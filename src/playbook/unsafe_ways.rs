@@ -27,6 +27,7 @@ pub fn catch_unwind_silent<F: FnOnce() -> R + panic::UnwindSafe, R>(
 
 #[cfg(test)]
 mod unsafe_ways_tests {
+    #[cfg(feature = "expensive_tests")]
     use super::catch_unwind_silent;
     use super::split_as_mut;
 
