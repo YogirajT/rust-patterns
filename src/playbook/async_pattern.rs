@@ -28,20 +28,21 @@ impl<R> Chunks<R> {
         let old_pos = read.stream_position()?;
         let len = read.seek(SeekFrom::End(0))?;
 
-        let rest = (len - old_pos) as usize; // len is always >= old_pos but they are u64
+        let rest = (len - old_pos) as usize;
         if rest != 0 {
             read.seek(SeekFrom::Start(old_pos))?;
         }
 
-        let min = rest / size + if rest % size != 0 { 1 } else { 0 };
+        let remainder = (rest % size != 0) as usize;
+        let min = (rest / size) + remainder;
+
         Ok(Self {
             read,
             size,
-            hint: (min, None), // this could be wrong I'm unsure
+            hint: (min, None),
         })
     }
 
-    // This could be useful if you want to try to recover from an error
     pub fn into_inner(self) -> R {
         self.read
     }
@@ -83,8 +84,6 @@ pub async fn read_file() -> io::Result<()> {
 
     // read up to 10 bytes
     let n = f.read(&mut buffer[..]).await?;
-
-    println!("The bytes: {:?}", &buffer[..n]);
 
     let s = match str::from_utf8(&buffer[..n]) {
         Ok(v) => v,
