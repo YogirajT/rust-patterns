@@ -33,8 +33,7 @@ impl<R> Chunks<R> {
             read.seek(SeekFrom::Start(old_pos))?;
         }
 
-        let remainder = (rest % size != 0) as usize;
-        let min = (rest / size) + remainder;
+        let min = (rest / size) + (rest % size != 0) as usize;
 
         Ok(Self {
             read,
@@ -78,8 +77,8 @@ where
     }
 }
 
-pub async fn read_file() -> io::Result<()> {
-    let mut f = File::open("foo.txt").await?;
+pub async fn read_file() -> io::Result<String> {
+    let mut f = File::open("foo").await?;
     let mut buffer = [0; 10];
 
     // read up to 10 bytes
@@ -90,9 +89,7 @@ pub async fn read_file() -> io::Result<()> {
         Err(e) => panic!("Invalid UTF-8 sequence: {e}"),
     };
 
-    println!("The string: {:?}", &s);
-
-    Ok(())
+    Ok(s.to_string())
 }
 
 #[cfg(test)]
@@ -120,7 +117,8 @@ mod async_tests {
 
     #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
     async fn async_test3() {
-        let _err = read_file().await;
+        let string = read_file().await.unwrap();
+        assert_eq!(string, "111111111\n");
     }
 
     #[test]
