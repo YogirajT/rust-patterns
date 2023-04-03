@@ -22,6 +22,16 @@ where
 
     pub fn set_value(&mut self, value: usize) {
         self.value = value;
+
+        let percentage_of_max = self.value as f64 / self.max as f64;
+
+        if (percentage_of_max >= 1.0) {
+            self.messenger.send(">=1");
+        } else if (percentage_of_max >= 0.9) {
+            self.messenger.send(">=0.9");
+        } else if (percentage_of_max >= 0.75) {
+            self.messenger.send(">=0.75");
+        }
     }
 }
 
