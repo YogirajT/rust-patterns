@@ -57,5 +57,12 @@ mod smart_pointer_tests {
     }
 
     #[test]
-    fn test_mock_messenget() {}
+    fn test_mock_messenget() {
+        let mock_messenger = MockMessenger::new();
+        let mut limit_tracker = LimitTracker::new(&mock_messenger, 100);
+
+        limit_tracker.set_value(80);
+
+        assert_eq!(mock_messenger.sent_messges.len(), 1);
+    }
 }
