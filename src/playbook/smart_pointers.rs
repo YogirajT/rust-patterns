@@ -25,19 +25,37 @@ where
 
         let percentage_of_max = self.value as f64 / self.max as f64;
 
-        if (percentage_of_max >= 1.0) {
-            self.messenger.send(">=1");
-        } else if (percentage_of_max >= 0.9) {
-            self.messenger.send(">=0.9");
-        } else if (percentage_of_max >= 0.75) {
-            self.messenger.send(">=0.75");
-        }
+        match percentage_of_max {
+            d if d >= 1.0 => self.messenger.send(">=1"),
+            d if d >= 0.9 => self.messenger.send(">=0.9"),
+            d if d >= 0.75 => self.messenger.send(">=0.75"),
+            _ => (),
+        };
     }
 }
 
 #[cfg(test)]
-mod raw_pointer_tests {
+mod smart_pointer_tests {
+    use super::*;
+
+    struct MockMessenger {
+        sent_messges: Vec<String>,
+    }
+
+    impl MockMessenger {
+        fn new() -> MockMessenger {
+            MockMessenger {
+                sent_messges: vec![],
+            }
+        }
+    }
+
+    impl Messenger for MockMessenger {
+        fn send(&self, msg: &str) {
+            self.sent_messges.push(String::from(msg))
+        }
+    }
 
     #[test]
-    fn test_pointer_1() {}
+    fn test_mock_messenget() {}
 }
