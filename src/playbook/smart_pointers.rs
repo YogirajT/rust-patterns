@@ -47,15 +47,15 @@ mod smart_pointer_tests {
     impl MockMessenger {
         fn new() -> MockMessenger {
             MockMessenger {
-                sent_messges: vec![],
+                sent_messges: RefCell::new(vec![]),
             }
         }
     }
 
     impl Messenger for MockMessenger {
-        fn send(&mut self, msg: &str) {
+        fn send(&self, msg: &str) {
             // error: change this to mutable reference
-            self.sent_messges.push(String::from(msg))
+            self.sent_messges.borrow_mut().push(String::from(msg))
         }
     }
 
@@ -66,6 +66,6 @@ mod smart_pointer_tests {
 
         limit_tracker.set_value(80);
 
-        assert_eq!(mock_messenger.sent_messges.len(), 1);
+        assert_eq!(mock_messenger.sent_messges.borrow().len(), 1);
     }
 }
