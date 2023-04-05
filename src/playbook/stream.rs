@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #[cfg(test)]
 mod stream_tests {
     use futures::{stream, StreamExt};
@@ -33,12 +34,12 @@ mod stream_tests {
                     let item = async { 1 }.await;
                     Some((item, (false, phase2, phase3)))
                 }
-                (phase1, true, phase3) => {
+                (_phase1, true, phase3) => {
                     // do some stuff for phase 2
                     let item = async { 2 }.await;
                     Some((item, (false, false, phase3)))
                 }
-                (phase1, phase2, true) => {
+                (_phase1, _phase2, true) => {
                     // do some stuff for phase 3
                     let item = async { 3 }.await;
                     Some((item, (false, false, false)))
