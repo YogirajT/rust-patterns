@@ -36,10 +36,12 @@ where
 
 #[cfg(test)]
 mod smart_pointer_tests {
+    use std::cell::RefCell;
+
     use super::*;
 
     struct MockMessenger {
-        sent_messges: Vec<String>,
+        sent_messges: RefCell<Vec<String>>,
     }
 
     impl MockMessenger {
@@ -51,7 +53,8 @@ mod smart_pointer_tests {
     }
 
     impl Messenger for MockMessenger {
-        fn send(&self, msg: &str) {
+        fn send(&mut self, msg: &str) {
+            // error: change this to mutable reference
             self.sent_messges.push(String::from(msg))
         }
     }
