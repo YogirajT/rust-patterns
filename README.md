@@ -41,3 +41,13 @@ Cons
 |   | \playbook  | Testing Rust's language specific magic |
 |   |  | simd.rs | SIMD vendor specific optimizations for vector processing vs auto-vectorization |
 |   |  | strtok.rs | In place string manipulation, why it breaks rust and workarounds  |
+
+
+## Images
+
+Async Workflow
+
+
+<picture>
+  <img alt="Product image" src="__docs__/async_rust_flow.avif">
+</picture>
