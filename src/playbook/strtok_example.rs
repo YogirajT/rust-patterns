@@ -7,7 +7,10 @@
 /*
    strtok returns the sufiix string after first instance of delimiter by moving pointer
 */
-pub fn strtok<'a, 'b>(input: &'a mut &'b str, delimiter: char) -> &'b str {
+
+//pub fn strtok<'a, 'b>(input: &'a mut &'b str, delimiter: char) -> &'b str {
+//better way
+pub fn strtok<'a>(input: &'_ mut &'a str, delimiter: char) -> &'a str {
     if let Some(i) = input.find(delimiter) {
         let prefix = &input[..i];
         let suffix = &input[(i + delimiter.len_utf8())..];

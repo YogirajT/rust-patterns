@@ -4,6 +4,6 @@ pub mod phantom_data_covariance;
 pub mod raw_pointers;
 pub mod smart_pointers;
 pub mod stream;
-pub mod strtok;
+pub mod strtok_example;
 pub mod unsafe_ways;
 pub mod vector_calc_simd_vs_chunk;

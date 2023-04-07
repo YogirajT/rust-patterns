@@ -13,7 +13,7 @@ struct Deserializer<T> {
 //this signature doesn't own a T so it can't drop a T
 struct Deserializer2<T> {
     // marker of covariance
-    t: PhantomData<fn() -> T>,
+    t: PhantomData<fn() -> T>, //preferred
     // another way
     t2: PhantomData<*const T>,
 }
@@ -31,4 +31,7 @@ struct Deserializer4<T> {
 
     // another way
     t3: PhantomData<*mut T>,
+
+    // another way
+    t4: PhantomData<fn(T) -> T>, //preferred
 }
