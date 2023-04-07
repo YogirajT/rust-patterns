@@ -49,9 +49,9 @@ mod strtok_tests {
     #[test]
     fn test_strtok_2() {
         let mut s = "foo bar";
-        let x = &mut s; // this compiles as mutable references are covariant over lifetime.
-                        //borrow of x stops here
-                        //&'s mut -> &'until-x mut
+        let _x = &mut s; // this compiles as mutable references are covariant over lifetime.
+                         //borrow of x stops here
+                         //&'s mut -> &'until-x mut
         {
             let foo = strtok(&mut s, ' ');
             assert_eq!("foo", foo);
