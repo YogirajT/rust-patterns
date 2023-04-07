@@ -37,11 +37,13 @@ impl Ingredient for DynamicChicken {
     }
 }
 
+// dyn incurs runttime cost as 2 pointers have to be dereferenced (1 fat 64bit pointer),
+// 1st pointer to the trait and 2nd pointer to the vtable that stores the function which has to be called.
 pub fn add_ingredients_to_stew(ingredient: &dyn Ingredient) {
     ingredient.stick_it_in_a_stew();
 }
 
-pub fn add_ingredients_to_pizza(ingredient: &dyn Ingredient) {
+pub fn add_ingredients_to_pizza(ingredient: &impl Ingredient) {
     ingredient.add_to_piza_topping();
 }
 
