@@ -1,6 +1,7 @@
 pub mod async_pattern;
 pub mod borrow_checker_quirks;
 pub mod phantom_data_covariance;
+pub mod poly;
 pub mod raw_pointers;
 pub mod smart_pointers;
 pub mod stream;

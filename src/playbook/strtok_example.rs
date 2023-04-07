@@ -5,7 +5,7 @@
 // Solution is to introduce another lifetime 'b so that the compiler can choose separate life
 // strtok is now generic over 2 lifetimes 1. mutable borrow and 2. the string that is being pointed to and we're returning reference into the string being pointed to
 /*
-   strtok returns the sufiix string after first instance of delimiter by moving pointer
+   strtok returns the prefix string before first instance of delimiter and mutates the pointer to the original to point to the suffix string
 */
 
 //pub fn strtok<'a, 'b>(input: &'a mut &'b str, delimiter: char) -> &'b str {

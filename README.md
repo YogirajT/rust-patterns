@@ -49,5 +49,5 @@ Async Workflow
 
 
 <picture>
-  <img alt="Product image" src="__docs__/async_rust_flow.avif">
+  <img alt="Product image" src="__docs__/async_rust_flow.png">
 </picture>
