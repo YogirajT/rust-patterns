@@ -8,35 +8,35 @@ pub fn mismatch(xs: &[u8], ys: &[u8]) -> usize {
 }
 
 //simd optimization approach
-#[inline(never)]
-pub fn mismatch_simd(xs: &[u8], ys: &[u8]) -> usize {
-    let l = xs.len().min(ys.len());
-    let mut xs = &xs[..l];
-    let mut ys = &ys[..l];
-    let mut off = 0;
+// #[inline(never)]
+// pub fn mismatch_simd(xs: &[u8], ys: &[u8]) -> usize {
+//     let l = xs.len().min(ys.len());
+//     let mut xs = &xs[..l];
+//     let mut ys = &ys[..l];
+//     let mut off = 0;
 
-    unsafe {
-        use std::arch::x86_64::*;
+//     unsafe {
+//         use std::arch::x86_64::*;
 
-        let zero = _mm256_setzero_si256();
-        while xs.len() >= 32 {
-            let x = _mm256_loadu_si256(xs.as_ptr() as _);
-            let y = _mm256_loadu_si256(ys.as_ptr() as _);
+//         let zero = _mm256_setzero_si256();
+//         while xs.len() >= 32 {
+//             let x = _mm256_loadu_si256(xs.as_ptr() as _);
+//             let y = _mm256_loadu_si256(ys.as_ptr() as _);
 
-            let r = _mm256_xor_si256(x, y);
-            let r = _mm256_cmpeq_epi8(r, zero);
-            let r = _mm256_movemask_epi8(r);
-            if r.trailing_ones() < 32 {
-                return off + r.trailing_ones() as usize;
-            }
+//             let r = _mm256_xor_si256(x, y);
+//             let r = _mm256_cmpeq_epi8(r, zero);
+//             let r = _mm256_movemask_epi8(r);
+//             if r.trailing_ones() < 32 {
+//                 return off + r.trailing_ones() as usize;
+//             }
 
-            xs = &xs[32..];
-            ys = &ys[32..];
-            off += 32;
-        }
-    }
-    off + mismatch(xs, ys)
-}
+//             xs = &xs[32..];
+//             ys = &ys[32..];
+//             off += 32;
+//         }
+//     }
+//     off + mismatch(xs, ys)
+// }
 
 //chunk approach (letting the compiler make the best choice)
 #[inline(never)]
@@ -56,7 +56,7 @@ pub fn mismatch_chunked(xs: &[u8], ys: &[u8]) -> usize {
 
 #[cfg(test)]
 mod vector_calc_simd_vs_chunk_tests {
-    use crate::playbook::vector_calc_simd_vs_chunk::{mismatch, mismatch_chunked, mismatch_simd};
+    use crate::playbook::vector_calc_simd_vs_chunk::{mismatch, mismatch_chunked, /* mismatch_simd */};
 
     #[test]
     fn test_bench() {
@@ -78,7 +78,7 @@ mod vector_calc_simd_vs_chunk_tests {
         }
 
         bench_mismatch("naive", mismatch);
-        bench_mismatch("simd ", mismatch_simd);
+        // bench_mismatch("simd ", mismatch_simd);
         bench_mismatch("chunk ", mismatch_chunked);
     }
 }
