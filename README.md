@@ -1,7 +1,5 @@
 # rust-patterns
-
-
-This is a repo to try different rust patterns.
+This is a repo where I try different design patterns and language specific quirks in rust.
 
 
 ## State
