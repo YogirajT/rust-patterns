@@ -39,6 +39,10 @@ Pros
 - Can provide better isolation and security for the primary container, as it can be run with different permissions.
 - Modularity and scalability
 
+Cons
+- Introduces additional complexity and overhead, as the sidecar container or process must be managed and deployed alongside the primary container.
+- May not be suitable for all systems and use cases, and should be used in combination with other system design patterns and techniques.
+
 ## Folder Structure
 
 
