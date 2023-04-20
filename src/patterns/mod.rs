@@ -5,6 +5,7 @@ pub mod factory;
 pub mod iterator;
 pub mod license;
 pub mod pubsub;
+pub mod sidecar;
 pub mod singleton;
 pub mod state;
 pub mod state_encoding_into_type_system;

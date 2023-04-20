@@ -30,6 +30,15 @@ Cons
 - Code repetition as we try to perform the same operation while chanding from one state to another (which can be reduced using macros).
 
 
+## Sidecar Pattern
+
+Sidecar Pattern is a system design pattern used in microservices that involves using a separate container or process to provide additional functionality to a primary application. The sidecar runs alongside the primary container and communicates with it through a shared network interface or file system, allowing it to provide services such as logging and observability.
+
+Pros
+- Allows additional functionality to be added without modifying the code of the primary container,
+- Can provide better isolation and security for the primary container, as it can be run with different permissions.
+- Modularity and scalability
+
 ## Folder Structure
 
 
