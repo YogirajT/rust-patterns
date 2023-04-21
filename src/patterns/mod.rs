@@ -10,3 +10,4 @@ pub mod singleton;
 pub mod state;
 pub mod state_encoding_into_type_system;
 pub mod strategy;
+pub mod leader_election;
