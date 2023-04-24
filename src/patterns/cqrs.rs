@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use std::collections::HashMap;
 
 // Define the write model
@@ -32,7 +33,6 @@ impl BankAccount {
         self.balance -= amount;
     }
 }
-
 
 impl QueryService {
     fn new() -> Self {
@@ -91,18 +91,19 @@ impl CommandService {
 
 #[cfg(test)]
 mod cqrs_tests {
+    use crate::patterns::cqrs::{CommandService, QueryService};
 
     #[test]
     fn test_cqrs() {
         let mut command_service = CommandService::new();
         let mut query_service = QueryService::new();
-    
+
         command_service.create_account(1);
         command_service.deposit(1, 100);
         command_service.withdraw(1, 50);
         let balance = command_service.get_balance(1).unwrap();
         assert_eq!(balance, 50);
-    
+
         let account_balance = command_service.update_balance(1).unwrap();
         query_service.update_balance(account_balance);
         let balance = query_service.get_balance(1).unwrap();
