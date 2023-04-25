@@ -12,6 +12,7 @@ hyper = "0.14.26"
 lazy_static = "1.4.0"
 num = "0.4"
 rand = "0.8.5"
+serde = { version = "1.0", features = ["derive"] }
 tokio = { version = "1.27.0", features = ["full"] }
 
 

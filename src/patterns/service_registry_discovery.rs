@@ -1,7 +1,8 @@
-use actix_web::{get, web, App, HttpResponse, HttpServer};
+use actix_web::{get, web, HttpResponse};
+use serde::Serialize;
 use std::sync::{Arc, Mutex};
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize)]
 struct Service {
     name: String,
     address: String,
@@ -22,37 +23,48 @@ impl ServiceRegistry {
         self.services.push(service);
     }
 
-    fn find(&self, name: &str) -> Option<&Service> {
-        self.services
-            .iter()
-            .find(|s| s.name == name)
-            .map(|s| s.clone())
+    fn find(&self, name: &str) -> Option<Service> {
+        let service = self.services.iter().find(|s| s.name == name);
+        service.cloned()
     }
 }
 
 #[get("/{name}")]
-async fn find_service(
-    web::Path(name): web::Path<String>,
+pub async fn find_service(
+    name: web::Path<String>,
     registry: web::Data<Arc<Mutex<ServiceRegistry>>>,
 ) -> HttpResponse {
     let registry = registry.lock().unwrap();
     match registry.find(&name) {
-        Some(service) => HttpResponse::Ok().json(&service),
+        Some(service) => HttpResponse::Ok().json(service),
         None => HttpResponse::NotFound().finish(),
     }
 }
 
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    let registry = Arc::new(Mutex::new(ServiceRegistry::new()));
-    registry.lock().unwrap().register(Service {
-        name: "users".to_string(),
-        address: "localhost".to_string(),
-        port: 8080,
-    });
+#[cfg(test)]
+mod service_discovery_tests {
+    use std::sync::{Arc, Mutex};
 
-    HttpServer::new(move || App::new().service(find_service).data(Arc::clone(&registry)))
+    use actix_web::{web::Data, App, HttpServer};
+
+    use super::{find_service, Service, ServiceRegistry};
+
+    #[actix_web::test]
+    async fn main() -> std::io::Result<()> {
+        let registry = Arc::new(Mutex::new(ServiceRegistry::new()));
+        registry.lock().unwrap().register(Service {
+            name: "users".to_string(),
+            address: "localhost".to_string(),
+            port: 8080,
+        });
+
+        HttpServer::new(move || {
+            App::new()
+                .service(find_service)
+                .app_data(Data::new(Arc::clone(&registry)))
+        })
         .bind("localhost:8000")?
         .run()
         .await
+    }
 }
