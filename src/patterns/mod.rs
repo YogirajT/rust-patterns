@@ -3,6 +3,7 @@ pub mod builder;
 pub mod cqrs;
 pub mod facade;
 pub mod factory;
+pub mod flyweight;
 pub mod iterator;
 pub mod leader_election;
 pub mod license;

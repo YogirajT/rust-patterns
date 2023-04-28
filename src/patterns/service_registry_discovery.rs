@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use actix_web::{get, web, HttpResponse};
 use serde::Serialize;
 use std::sync::{Arc, Mutex};

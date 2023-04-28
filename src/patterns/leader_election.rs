@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use std::sync::Arc;
 use tokio::sync::{mpsc, Mutex};
 
@@ -46,21 +47,19 @@ impl LeaderElection {
     }
 }
 
-
 #[cfg(test)]
 mod async_tests {
-    use std::sync::{Arc};
-    use tokio::sync::{Mutex};
+    use std::sync::Arc;
+    use tokio::sync::Mutex;
 
-    use tokio::join;
     use crate::patterns::leader_election::LeaderElection;
-
+    use tokio::join;
 
     #[tokio::test()]
     async fn async_test3() {
         let nodes = Arc::new(vec![1, 2, 3, 4]);
         let leader = Arc::new(Mutex::new(None));
-    
+
         let election1 = LeaderElection {
             id: 0,
             nodes: nodes.clone(),
@@ -81,7 +80,7 @@ mod async_tests {
             nodes: nodes.clone(),
             leader: leader.clone(),
         };
-    
+
         join!(
             election1.start(),
             election2.start(),
@@ -92,6 +91,4 @@ mod async_tests {
         let assigned_leader = leader.clone().lock().await.unwrap();
         assert_eq!(assigned_leader, 1);
     }
-
 }
-
