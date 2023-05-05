@@ -111,7 +111,7 @@ mod composite_tests {
     use crate::patterns::composite::{Folder, File};
 
     #[test]
-    fn test_composite() {
+    fn test_composite_1() {
         let mut root = Folder::new("root".to_string());
         let mut folder1 = Folder::new("folder1".to_string());
         let mut folder2 = Folder::new("folder2".to_string());
@@ -126,10 +126,16 @@ mod composite_tests {
         root.add(Box::new(folder1));
         root.add(Box::new(folder2));
 
-        let gg = root.ls();
+        assert_eq!(root.ls(), "root\nfolder1\nfile1\nfolder2\nfile2\nfile3\n");
+    }
 
-        assert_eq!(gg, "root\nfolder1\nfile1\nfolder2\nfile2\nfile3\n");
-        // assert_eq!(folder1.ls(), "folder1\nfile1\n");
-        // assert_eq!(folder2.ls(), "folder2\nfile2\nfile3\n");
+    #[test]
+    fn test_composite2() {
+        let mut folder1 = Folder::new("folder1".to_string());
+        let file1 = File::new("file1".to_string());
+
+        folder1.add(Box::new(file1));
+
+        assert_eq!(folder1.ls(), "folder1\nfile1\n");
     }
 }
