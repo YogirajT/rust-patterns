@@ -8,3 +8,4 @@ pub mod stream;
 pub mod strtok_example;
 pub mod unsafe_ways;
 pub mod vector_calc_simd_vs_chunk;
+pub mod const_type_expressions;

@@ -86,7 +86,7 @@ mod smart_pointer_tests {
         fn send(&self, msg: &str) {
             let mut first_borrow = self.sent_messges.borrow_mut();
 
-            // sencond borrow not allowed as Refcell only allows 1 mutable borrow.
+            // second borrow not allowed as Refcell only allows 1 mutable borrow.
             // let mut second_borrow = self.sent_messges.borrow_mut();
             // error: change this to mutable reference
             first_borrow.push(String::from(msg));
