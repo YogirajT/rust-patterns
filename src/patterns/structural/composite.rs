@@ -108,7 +108,7 @@ impl Component for Folder {
 
 #[cfg(test)]
 mod composite_tests {
-    use crate::patterns::composite::{Folder, File};
+    use super::{Folder, File};
 
     #[test]
     fn test_composite_1() {

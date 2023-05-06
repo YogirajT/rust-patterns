@@ -72,7 +72,7 @@ impl CarFactory {
 
 #[cfg(test)]
 mod factory_tests {
-    use crate::patterns::factory::{Body, Engine, Paint};
+    use crate::patterns::creational::factory::{Body, Engine, Paint};
 
     use super::CarFactory;
 

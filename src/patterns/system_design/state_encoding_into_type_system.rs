@@ -1,4 +1,5 @@
-use super::license::License;
+use crate::patterns::license::License;
+
 
 pub struct LicenseProcessInitiate {
     license_type: License,

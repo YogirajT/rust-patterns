@@ -1,15 +1,15 @@
 #![allow(dead_code)]
 
 static SP_MESSAGE: &str = "Specific request";
-trait TargetTrait {
+pub trait TargetTrait {
     fn approve(&self) -> String;
 }
 
-trait AdapteeTrait {
+pub trait AdapteeTrait {
     fn approve_driving_license(&self) -> String;
 }
 
-struct ConcreteAdaptee {}
+pub struct ConcreteAdaptee {}
 
 impl AdapteeTrait for ConcreteAdaptee {
     fn approve_driving_license(&self) -> String {
@@ -35,9 +35,8 @@ impl<'a> TargetTrait for Adapter<'a> {
 
 #[cfg(test)]
 mod adapter_tests {
-    use crate::patterns::adapter::{
-        AdapteeTrait, Adapter, ConcreteAdaptee, TargetTrait, SP_MESSAGE,
-    };
+    use super::{ConcreteAdaptee, Adapter, SP_MESSAGE, AdapteeTrait, TargetTrait};
+
 
     #[test]
     fn test_adapter() {

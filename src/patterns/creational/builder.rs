@@ -59,7 +59,8 @@ impl Carbuilder {
 
 #[cfg(test)]
 mod builder_tests {
-    use crate::patterns::factory::{Body, Engine, Paint};
+
+    use crate::patterns::creational::factory::{Body, Engine, Paint};
 
     use super::Carbuilder;
 

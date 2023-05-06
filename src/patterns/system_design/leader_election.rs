@@ -52,7 +52,7 @@ mod async_tests {
     use std::sync::Arc;
     use tokio::sync::Mutex;
 
-    use crate::patterns::leader_election::LeaderElection;
+    use super::LeaderElection;
     use tokio::join;
 
     #[tokio::test()]

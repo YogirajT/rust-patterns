@@ -1,4 +1,6 @@
 #![allow(dead_code)]
+#![allow(private_in_public)] // to fix issues with find_service
+
 use actix_web::{get, web, HttpResponse};
 use serde::Serialize;
 use std::sync::{Arc, Mutex};
@@ -35,6 +37,7 @@ pub async fn find_service(
     name: web::Path<String>,
     registry: web::Data<Arc<Mutex<ServiceRegistry>>>,
 ) -> HttpResponse {
+    #[allow(private_in_public)]
     let registry = registry.lock().unwrap();
     match registry.find(&name) {
         Some(service) => HttpResponse::Ok().json(service),

@@ -48,7 +48,8 @@ where
 
 #[cfg(test)]
 mod strategy_tests {
-    use crate::patterns::strategy::{Context, EvenFilter, OddFilter};
+    use super::{EvenFilter, Context, OddFilter};
+
 
     #[test]
     fn test_strategy() {

@@ -66,7 +66,7 @@ impl HeroFactory {
 
 #[cfg(test)]
 mod flyweight_tests {
-    use crate::patterns::flyweight::{HeroFactory, Team};
+    use super::{HeroFactory, Team};
 
     #[test]
     fn test_flyweight() {

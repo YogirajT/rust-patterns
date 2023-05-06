@@ -91,7 +91,7 @@ impl CommandService {
 
 #[cfg(test)]
 mod cqrs_tests {
-    use crate::patterns::cqrs::{CommandService, QueryService};
+    use super::{CommandService, QueryService};
 
     #[test]
     fn test_cqrs() {
