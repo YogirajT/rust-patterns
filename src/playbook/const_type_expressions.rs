@@ -16,12 +16,30 @@ fn bar<T, const M: usize>() {
 }
 
 
-pub struct MinSlice<T, const N: usize> {
+pub struct MinSlice<T: Sized, const N: usize> {
     /// The bounded region of memory. Exactly `N` `T`s.
     pub head: [T; N],
     /// Zero or more remaining `T`s after the `N` in the bounded region.
     pub tail: [T],
 }
+
+// impl<T: Copy, const N: usize> MinSlice<T, N> {
+//     pub fn from_slice(slice: &[T]) -> Option<Self> {
+//         if slice.len() == N {
+//             let mut head = [Default::default(); N];
+//             head.copy_from_slice(&slice[..N]);
+//             Some(Self { head, tail: Vec::new() })
+//         } else if slice.len() > N {
+//             let mut head = [Default::default(); N];
+//             head.copy_from_slice(&slice[..N]);
+//             let tail = slice[N..].to_vec();
+//             Some(Self { head, tail })
+//         } else {
+//             None
+//         }
+//     }
+// }
+
 
 fn main() {
     let slice: &[u8] = b"Hello, world";
