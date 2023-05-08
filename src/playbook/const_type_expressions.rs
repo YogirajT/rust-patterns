@@ -1,4 +1,7 @@
 // https://practice.rs/generics-traits/const-generics.html
+#![allow(dead_code)]
+
+use std::slice;
 
 fn foo<const N: usize>() {}
 
@@ -23,37 +26,37 @@ pub struct MinSlice<T: Sized, const N: usize> {
     pub tail: [T],
 }
 
-// impl<T: Copy, const N: usize> MinSlice<T, N> {
-//     pub fn from_slice(slice: &[T]) -> Option<Self> {
-//         if slice.len() == N {
-//             let mut head = [Default::default(); N];
-//             head.copy_from_slice(&slice[..N]);
-//             Some(Self { head, tail: Vec::new() })
-//         } else if slice.len() > N {
-//             let mut head = [Default::default(); N];
-//             head.copy_from_slice(&slice[..N]);
-//             let tail = slice[N..].to_vec();
-//             Some(Self { head, tail })
-//         } else {
-//             None
-//         }
-//     }
-// }
+impl<T: Copy, const N: usize> MinSlice<T, N> {
+    pub fn from_slice(slice: &[T]) -> Option<&MinSlice<T, N>> {
+        if slice.len() >= N {
+            Some(unsafe { Self::from_slice_unchecked(slice) })
+        } else {
+            None
+        }
+    }
+
+    pub unsafe fn from_slice_unchecked(slice: &[T]) -> &MinSlice<T, N> {
+        let resized = slice::from_raw_parts(slice.as_ptr(), slice.len() - N);
+        &*(resized as *const [T] as *const MinSlice<T, N>)
+    }
+}
+
+#[cfg(test)]
+mod const_type_expression_tests {
+    use crate::playbook::const_type_expressions::MinSlice;
 
 
-fn main() {
-    let slice: &[u8] = b"Hello, world";
-    let reference: Option<&u8> = slice.get(6);
-    // We know this value is `Some(b' ')`,
-    // but the compiler can't know that.
-    assert!(reference.is_some());
+    #[test]
+    fn test_const_type_expression_() {
+        let slice: &[u8] = b"Hello, world";
+        let reference: Option<&u8> = slice.get(6);
+        assert!(reference.is_some());
 
-    let slice: &[u8] = b"Hello, world";
-    // Length check is performed when we construct a MinSlice,
-    // and it's known at compile time to be of length 12.
-    // If the `unwrap()` succeeds, no more checks are needed
-    // throughout the `MinSlice`'s lifetime.
-    // let minslice = MinSlice::<u8, 12>::from_slice(slice).unwrap();
-    // let value: u8 = minslice.head[6];
-    // assert_eq!(value, b' ')
+        let slice: &[u8] = b"Hello, world";
+
+        let minslice = MinSlice::<u8, 12>::from_slice(slice).unwrap();
+        let value: u8 = minslice.head[6];
+        assert_eq!(value, b' ')
+    }
+
 }
