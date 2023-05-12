@@ -73,7 +73,6 @@ mod algo_tests {
     #[test]
     fn dinics_test() {
         let n = 4;
-        let m = 5;
         let s = 0;
         let t = n - 1;
         let mut graph = Graph::new(n);
