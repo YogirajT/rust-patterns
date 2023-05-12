@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 trait Visitor {
     fn visit_int(&mut self, i: i32);
     fn visit_str(&mut self, s: &str);
