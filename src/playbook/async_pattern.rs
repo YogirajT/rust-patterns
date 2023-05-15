@@ -42,9 +42,6 @@ impl<R> Chunks<R> {
         })
     }
 
-    pub fn into_inner(self) -> R {
-        self.read
-    }
 }
 
 impl<R> Iterator for Chunks<R>

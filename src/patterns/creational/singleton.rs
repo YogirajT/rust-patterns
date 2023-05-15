@@ -28,7 +28,7 @@ lazy_static! {
 
 #[cfg(test)]
 mod singleton_tests {
-    use crate::patterns::creational::singleton::COUNTER_SINGLETON;
+    use super::*;
 
     #[test]
     fn test_singleton() {
