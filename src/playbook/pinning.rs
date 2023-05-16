@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-use std::{ptr::NonNull, marker::{PhantomPinned, PhantomData}, pin::Pin};
+use std::{ptr::NonNull, marker::{PhantomPinned}, pin::Pin};
 
 
 struct Unmovable {
@@ -61,6 +61,10 @@ impl Movable {
 mod pin_tests {
     use super::*;
 
+    fn move_ref<T>(arg: T) -> T {
+        arg
+    }
+
     #[test]
     fn pinning_test() {
         let test_string = "test".to_string();
@@ -74,11 +78,11 @@ mod pin_tests {
 
     #[test]
     fn pinning_negative_test() {
-        let test_string = "test".to_string();
+        let test_string = "test to see if this moves or not".to_string();
 
-        let unmoved = Movable::new(test_string);
+        let to_be_moved = Movable::new(test_string);
 
-        let moved = unmoved;
+        let moved = move_ref(to_be_moved);
 
         assert_eq!(moved.slice, NonNull::from(&moved.data));
     }
