@@ -1,5 +1,7 @@
 #![allow(dead_code)]
-use std::{ptr::NonNull, marker::{PhantomPinned}, pin::Pin};
+use std::{ptr::NonNull, marker::{PhantomPinned}, pin::Pin, task::{Poll, Context}};
+
+use futures::Future;
 
 
 struct Unmovable {
@@ -56,6 +58,25 @@ impl Movable {
     }
 }
 
+
+struct FutureStruct {}
+
+// Future pinning for struct
+impl Future for FutureStruct {
+    type Output = ();
+    fn poll(self: Pin<&mut Self>, _cx: &mut Context<'_>) -> Poll<()> {
+        Poll::Ready(())
+    }
+}
+
+// Future trait into function
+impl FutureStruct {
+    fn get_something_async(&self) -> impl Future<Output = String> + '_ {
+        async {
+            "Hello World".to_string()
+        }
+    }
+}
 
 #[cfg(test)]
 mod pin_tests {
