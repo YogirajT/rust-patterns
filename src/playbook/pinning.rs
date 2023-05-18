@@ -39,18 +39,18 @@ struct Movable {
 
 
 impl Movable {
-    fn new(data: String) -> Box<Self> {
+    fn new(data: String) -> Self {
         let res = Movable {
             data,
             slice: NonNull::dangling(),
         };
-        let mut boxed = Box::new(res);
+        let mut boxed = res;
 
         let slice = NonNull::from(&boxed.data);
 
         let mut_ref = &mut boxed;
 
-        let movableref = mut_ref.as_mut();
+        let movableref = mut_ref;
 
         movableref.slice = slice;
 
@@ -92,7 +92,7 @@ mod pin_tests {
 
         let unmoved = Unmovable::new(test_string);
 
-        let still_unmoved = unmoved;
+        let mut still_unmoved = unmoved;
 
         assert_eq!(still_unmoved.slice, NonNull::from(&still_unmoved.data));
     }
@@ -103,8 +103,9 @@ mod pin_tests {
 
         let to_be_moved = Movable::new(test_string);
 
-        let moved = move_ref(to_be_moved);
+        let mut moved = to_be_moved;
 
-        assert_eq!(moved.slice, NonNull::from(&moved.data));
+        //this will avuse error as data is moved but not the address of self referenceing pointer
+        // assert_eq!(moved.slice, NonNull::from(&moved.data));
     }
 }
