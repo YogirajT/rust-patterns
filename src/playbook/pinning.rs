@@ -117,7 +117,9 @@ impl Webpage {
     // }
 
     pub fn get_slug(self: Pin<&Self>) -> String {
-        unsafe { &*(self.slug) }.replace(" ", "-").to_lowercase()
+        let slugptr = unsafe { &*(self.slug) };
+
+        slugptr.replace(" ", "-").to_lowercase()
     }
 
     fn get_title(&self) -> &str {
@@ -137,7 +139,7 @@ impl Future for Webpage {
 impl Display for Webpage {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let this = unsafe { Pin::new_unchecked(self) };
-        write!(f, "Webpage:`{}` slug:`{}`", this.as_ref().get_title(), this.as_ref().get_slug())?;
+        write!(f, "Webpage:`{}` slug:`{}`", this.get_title(), this.get_slug())?;
         Ok(())
     }
 }
@@ -172,7 +174,7 @@ mod pin_tests {
 
         println!("{:?}", moved);
 
-        //this will avuse error as data is moved but not the address of self referenceing pointer
+        //this will trigger error as data is moved but not the address of self referenceing pointer
         // assert_eq!(moved.slice, NonNull::from(&moved.data));
     }
 
@@ -184,8 +186,8 @@ mod pin_tests {
         let mut page1 = unsafe { Pin::new_unchecked(&mut page1) };
         let mut page2= unsafe { Pin::new_unchecked(&mut page2) };
 
-        Webpage::collect_slug(page1.as_mut());
-        Webpage::collect_slug(page2.as_mut());
+        page1.as_mut().collect_slug();
+        page2.as_mut().collect_slug();
         std::mem::swap(&mut page1, &mut page2); // This will break without pin as the struct moved however, not the pointers to the string
         page1.await;
         page2.await;
