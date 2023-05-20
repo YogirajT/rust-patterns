@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-use std::{ptr::NonNull, marker::{PhantomPinned}, pin::Pin, task::{Poll, Context}};
+use std::{ptr::NonNull, marker::{PhantomPinned}, pin::Pin, task::{Poll, Context}, fmt::Display};
 
 use futures::Future;
 
@@ -32,11 +32,11 @@ impl Unmovable {
     }
 }
 
+#[derive(Debug)]
 struct Movable {
     data: String,
     slice: NonNull<String>,
 }
-
 
 impl Movable {
     fn new(data: String) -> Self {
@@ -78,6 +78,71 @@ impl FutureStruct {
     }
 }
 
+
+
+// Slug with Future and pinning
+
+#[derive(Debug)]
+pub struct Webpage {
+    title: String,
+    slug: *const String,
+    _marker: PhantomPinned // adding removing this makes or breakes the test #3
+}
+
+
+impl Webpage {
+    pub fn new(title: String) -> Self {
+        Self {
+            title,
+            slug: std::ptr::null(),
+            _marker: PhantomPinned
+        }
+    }
+
+    fn collect_slug(/* &mut self */ self: Pin<&mut Self>) {
+        // let ref_slug = &self.title as *const _; // _ is automatically inferred as String
+        // self.slug = ref_slug;
+
+        let ref_slug = &self.title as *const String;
+        let this = unsafe {
+            self.get_unchecked_mut()
+        };
+        this.slug = ref_slug;
+    }
+
+    // fn get_slug(&self) -> String {
+    //     let slugptr = unsafe { &*(self.slug) };
+
+    //     slugptr.replace(" ", "-").to_lowercase()
+    // }
+
+    pub fn get_slug(self: Pin<&Self>) -> String {
+        unsafe { &*(self.slug) }.replace(" ", "-").to_lowercase()
+    }
+
+    fn get_title(&self) -> &str {
+        &self.title
+    }
+}
+
+impl Future for Webpage {
+    type Output = ();
+    fn poll(self: Pin<&mut Self>, _cx: &mut Context<'_>) -> Poll<()> {
+        println!("Webpage:::poll {}", self);
+        Poll::Ready(())
+    }
+}
+
+
+impl Display for Webpage {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let this = unsafe { Pin::new_unchecked(self) };
+        write!(f, "Webpage:`{}` slug:`{}`", this.as_ref().get_title(), this.as_ref().get_slug())?;
+        Ok(())
+    }
+}
+
+
 #[cfg(test)]
 mod pin_tests {
     use super::*;
@@ -105,7 +170,24 @@ mod pin_tests {
 
         let mut moved = to_be_moved;
 
+        println!("{:?}", moved);
+
         //this will avuse error as data is moved but not the address of self referenceing pointer
         // assert_eq!(moved.slice, NonNull::from(&moved.data));
+    }
+
+
+    #[tokio::test(flavor = "current_thread")]
+    async fn pinning_test_3() {
+        let mut page1: Webpage = Webpage::new("Page 1".to_string());
+        let mut page2 = Webpage::new("Page 2".to_string());
+        let mut page1 = unsafe { Pin::new_unchecked(&mut page1) };
+        let mut page2= unsafe { Pin::new_unchecked(&mut page2) };
+
+        Webpage::collect_slug(page1.as_mut());
+        Webpage::collect_slug(page2.as_mut());
+        std::mem::swap(&mut page1, &mut page2); // This will break without pin as the struct moved however, not the pointers to the string
+        page1.await;
+        page2.await;
     }
 }
