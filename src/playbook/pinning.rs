@@ -110,13 +110,7 @@ impl Webpage {
         this.slug = ref_slug;
     }
 
-    // fn get_slug(&self) -> String {
-    //     let slugptr = unsafe { &*(self.slug) };
-
-    //     slugptr.replace(" ", "-").to_lowercase()
-    // }
-
-    pub fn get_slug(self: Pin<&Self>) -> String {
+    pub fn get_slug(/* &self */ self: Pin<&Self>) -> String { //replaced with pinned reference to self
         let slugptr = unsafe { &*(self.slug) };
 
         slugptr.replace(" ", "-").to_lowercase()
