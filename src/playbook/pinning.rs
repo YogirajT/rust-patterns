@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-use std::{ptr::NonNull, marker::{PhantomPinned}, pin::Pin, task::{Poll, Context}, fmt::Display};
+use std::{ptr::NonNull, marker::{PhantomPinned}, pin::Pin, task::{Poll, Context}, fmt::Display, time::{self, Duration}};
 
 use futures::Future;
 
@@ -135,6 +135,44 @@ impl Display for Webpage {
         let this = unsafe { Pin::new_unchecked(self) };
         write!(f, "Webpage:`{}` slug:`{}`", this.get_title(), this.get_slug())?;
         Ok(())
+    }
+}
+
+// trace for webpage
+struct TraceDuration<F: Future> {
+    start: Option<time::Instant>,
+    child: F
+}
+
+
+impl<F: Future> Future for TraceDuration<F> {
+    type Output = (F::Output, Duration);
+    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+        // let start = self.start.get_or_insert(time::Instant::now());
+        // let post_poll = self.child.poll(cx);
+        // let elapsed = start.elapsed();
+        // match post_poll {
+        //     Poll::Ready(res) => Poll::Ready((res, elapsed)),
+        //     Poll::Pending => Poll::Pending,
+        // }
+
+        // can be simplified with pin-project like this,
+        //    let this = self.project();
+
+        let (mut start, child) = unsafe {
+            let this = self.get_unchecked_mut();
+            (
+                Pin::new_unchecked(&mut this.start),
+                Pin::new_unchecked(&mut this.child),
+            )
+        };
+        let start = start.get_or_insert(time::Instant::now());
+        let post_poll = child.poll(cx);
+        let elapsed = start.elapsed();
+        match post_poll {
+            Poll::Ready(res) => Poll::Ready((res, elapsed)),
+            Poll::Pending => Poll::Pending,
+        }
     }
 }
 
