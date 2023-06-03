@@ -19,13 +19,13 @@
 		"ghcr.io/devcontainers/features/rust:1": {},
 		"devwasm.azurecr.io/dev-wasm/dev-wasm-feature/rust-wasi:0": {},
 		"ghcr.io/devcontainers/features/git:1": {}
-	}
+	},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "rustc --version",
+	"postCreateCommand": "cargo add cargo-watch"
 
 	// Configure tool-specific properties.
 	// "customizations": {},
