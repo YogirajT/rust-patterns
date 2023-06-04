@@ -1,6 +1,9 @@
 #![allow(dead_code)]
 use std::cmp;
 
+
+// Dinics's algorithm for maximum flow
+
 #[derive(Clone)]
 struct Edge {
     to: usize,
