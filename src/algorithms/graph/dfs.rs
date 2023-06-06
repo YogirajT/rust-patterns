@@ -1,5 +1,5 @@
 use std::collections::HashSet;
-use super::graph::Graph;
+use super::graph_core::Graph;
 
 trait Dfs {
     fn dfs_recursive(&self, vertex: usize, visited: &mut HashSet<usize>);

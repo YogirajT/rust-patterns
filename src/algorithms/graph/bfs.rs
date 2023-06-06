@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
 use std::collections::HashSet;
 
-use super::graph::Graph;
+use super::graph_core::Graph;
 
 trait Bfs {
     fn bfs(&self, start: usize);
