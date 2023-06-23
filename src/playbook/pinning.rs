@@ -113,7 +113,7 @@ impl Webpage {
     pub fn get_slug(/* &self */ self: Pin<&Self>) -> String { //replaced with pinned reference to self
         let slugptr = unsafe { &*(self.slug) };
 
-        slugptr.replace(" ", "-").to_lowercase()
+        slugptr.replace(' ', "-").to_lowercase()
     }
 
     fn get_title(&self) -> &str {
@@ -191,7 +191,7 @@ mod pin_tests {
 
         let unmoved = Unmovable::new(test_string);
 
-        let mut still_unmoved = unmoved;
+        let still_unmoved = unmoved;
 
         assert_eq!(still_unmoved.slice, NonNull::from(&still_unmoved.data));
     }
@@ -202,7 +202,7 @@ mod pin_tests {
 
         let to_be_moved = Movable::new(test_string);
 
-        let mut moved = to_be_moved;
+        let moved = to_be_moved;
 
         println!("{:?}", moved);
 
