@@ -1,5 +1,4 @@
 use super::graph_core::Graph;
-use std::collections::{HashSet};
 
 trait TopSort {
     fn dfs(&self, start: usize, visited: &mut Vec<bool>, result: &mut Vec<usize>);
