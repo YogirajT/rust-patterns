@@ -2,6 +2,7 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
+#[derive(PartialEq)]
 struct Node<T> {
     value: T,
     degree: usize,
