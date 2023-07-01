@@ -2,8 +2,9 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-#[derive(PartialEq)]
-struct Node<T> {
+#[derive(PartialEq, Clone)]
+struct Node<T>
+where T: Copy {
     value: T,
     degree: usize,
     marked: bool,
@@ -13,7 +14,7 @@ struct Node<T> {
     next: Option<Rc<RefCell<Node<T>>>>,
 }
 
-impl<T> Node<T> {
+impl<T: Copy> Node<T> {
     fn new(value: T) -> Self {
         Node {
             value,
@@ -27,13 +28,13 @@ impl<T> Node<T> {
     }
 }
 
-struct FibonacciHeap<T> {
+struct FibonacciHeap<T: Copy> {
     min_node: Option<Rc<RefCell<Node<T>>>>,
     size: usize,
 }
 
 
-impl<T: Ord> FibonacciHeap<T> {
+impl<T: Ord + Copy> FibonacciHeap<T> {
     fn new() -> Self {
         FibonacciHeap {
             min_node: None,
@@ -172,7 +173,7 @@ fn consolidate(&mut self) {
                 next.borrow_mut().prev = node.borrow().prev.clone();
             }
 
-            if node.as_ref().eq(&child) {
+            if node.as_ref().eq(child.clone().unwrap().as_ref()) {
                 self.min_node = None;
             } else {
                 self.min_node = child;
