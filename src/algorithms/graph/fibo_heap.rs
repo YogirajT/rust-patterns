@@ -5,7 +5,7 @@ use std::rc::Rc;
 #[derive(PartialEq, Clone)]
 struct Node<T>
 where T: Copy {
-    value: T,
+    pub value: T,
     degree: usize,
     marked: bool,
     parent: Option<Rc<RefCell<Node<T>>>>,
@@ -187,8 +187,8 @@ fn consolidate(&mut self) {
         }
     }
 
-    fn find_min(&self) -> Option<&T> {
-        self.min_node.as_ref().map(|node| &node.borrow().value)
+    fn find_min(&self) -> Option<T> {
+        self.min_node.as_ref().map(|node| node.borrow().value)
     }
 
     fn is_empty(&self) -> bool {
@@ -198,4 +198,40 @@ fn consolidate(&mut self) {
     fn size(&self) -> usize {
         self.size
     }
+}
+
+
+#[cfg(test)]
+mod fibo_heap_tests {
+    use super::*;
+    use std::f32::INFINITY;
+
+    #[test]
+    fn test_fibo_heap() {
+        let mut heap = FibonacciHeap::new();
+
+        heap.insert(4);
+        heap.insert(1);
+        heap.insert(7);
+
+        assert_eq!(heap.find_min(), Some(1));
+        assert_eq!(heap.size(), 3);
+        assert!(!heap.is_empty());
+    }
+
+    #[test]
+    fn test_extract_min() {
+        let mut heap = FibonacciHeap::new();
+
+        heap.insert(4);
+        heap.insert(1);
+        heap.insert(7);
+
+        assert_eq!(heap.extract_min(), Some(1));
+        assert_eq!(heap.extract_min(), Some(4));
+        assert_eq!(heap.extract_min(), Some(7));
+        assert_eq!(heap.extract_min(), None);
+        assert!(heap.is_empty());
+    }
+
 }
