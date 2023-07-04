@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-use std::{cell::RefCell, rc::Rc};
+use std::{cell::RefCell, rc::{Rc, Weak}};
 pub trait Messenger {
     fn send(&self, msg: &str);
 }
@@ -64,6 +64,97 @@ enum List {
 #[allow(unused_imports)]
 use List::{Cons, Nil};
 
+struct P {
+    i: Rc<RefCell<I>>,
+}
+
+impl P {
+    fn new() -> P {
+        let b = B {
+            v: "b".to_string(),
+            i: Weak::new(),
+        };
+        let c = C {
+            v: "c".to_string(),
+            i: Weak::new(),
+        };
+        let i = Rc::new(RefCell::new(I { b, c }));
+        let ii = i.clone();
+        let p = P { i };
+
+        // init b.i
+        let mut borrow_mut = RefCell::borrow_mut(&ii);
+        let bb = &mut borrow_mut.b;
+        bb.i = Rc::downgrade(&ii);
+
+        // init c.i
+        let cc = &mut borrow_mut.c;
+        cc.i = Rc::downgrade(&ii);
+        p
+    }
+
+    fn update_bv_cv(&self) {
+        {
+            // update b.v
+            let mut borrow_mut = RefCell::borrow_mut(&self.i);
+            let b = &mut borrow_mut.b;
+            b.v.push_str("=>p.update_bv_cv");
+
+            // update c.v
+            let c = &mut borrow_mut.c;
+            c.v.push_str("=>p.update_bv_cv");
+        }
+
+        let i = {
+            // b update c.v
+            let ref_i = RefCell::borrow(&self.i); // RefCell::<I>::borrow::<'r>(&'r self) -> Ref<'r, I>
+            ref_i.b.i.clone()
+        };
+        update_cv_from_b(&i);
+    }
+
+    fn get_bv_cv(&self) -> (String, String) {
+        let i = &self.i;
+        let ii = i.borrow();
+
+        let bv = ii.b.v.as_str();
+        let cv = ii.c.v.as_str();
+
+        (bv.into(), cv.into())
+    }
+}
+
+// parent inner
+struct I {
+    c: C,
+    b: B,
+}
+
+// child
+struct C {
+    i: Weak<RefCell<I>>,
+    v: String,
+}
+
+// child
+struct B {
+    i: Weak<RefCell<I>>,
+    v: String,
+}
+
+impl B {
+    fn update_cv(&self) {
+        update_cv_from_b(&self.i);
+    }
+}
+
+fn update_cv_from_b(i: &Weak<RefCell<I>>) {
+    if let Some(i) = i.upgrade() {
+        let mut ii = RefCell::borrow_mut(&i);
+        ii.c.v.push_str("b.udpate_cv");
+    }
+}
+
 #[cfg(test)]
 mod smart_pointer_tests {
     use std::cell::RefCell;
@@ -127,5 +218,14 @@ mod smart_pointer_tests {
             }
         }
         panic!("something wrong with the list")
+    }
+
+    #[test]
+    fn refcell_already_borrowed_test() {
+        let p = P::new();
+        p.update_bv_cv();
+        let (bv, cv) = p.get_bv_cv();
+        assert_eq!(bv, "b=>p.update_bv_cv");
+        assert_eq!(cv, "c=>p.update_bv_cvb.udpate_cv");
     }
 }
