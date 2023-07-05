@@ -94,23 +94,12 @@ impl P {
     }
 
     fn update_bv_cv(&self) {
-        {
-            // update b.v
-            let mut borrow_mut = RefCell::borrow_mut(&self.i);
-            let b = &mut borrow_mut.b;
-            b.v.push_str("=>p.update_bv_cv");
+        let mut borrow_mut = RefCell::borrow_mut(&self.i);
 
-            // update c.v
-            let c = &mut borrow_mut.c;
-            c.v.push_str("=>p.update_bv_cv");
-        }
+        // update c.v directly
+        borrow_mut.c.v.push_str("=>p.update_bv_cv");
 
-        let i = {
-            // b update c.v
-            let ref_i = RefCell::borrow(&self.i); // RefCell::<I>::borrow::<'r>(&'r self) -> Ref<'r, I>
-            ref_i.b.i.clone()
-        };
-        update_cv_from_b(&i);
+        unsafe { (*borrow_mut.b.i.upgrade().unwrap().as_ptr()).c.v.push_str(" b.update_cv"); }
     }
 
     fn get_bv_cv(&self) -> (String, String) {
@@ -142,18 +131,6 @@ struct B {
     v: String,
 }
 
-impl B {
-    fn update_cv(&self) {
-        update_cv_from_b(&self.i);
-    }
-}
-
-fn update_cv_from_b(i: &Weak<RefCell<I>>) {
-    if let Some(i) = i.upgrade() {
-        let mut ii = RefCell::borrow_mut(&i);
-        ii.c.v.push_str("b.udpate_cv");
-    }
-}
 
 #[cfg(test)]
 mod smart_pointer_tests {
