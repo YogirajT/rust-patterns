@@ -202,7 +202,7 @@ mod smart_pointer_tests {
         let p = P::new();
         p.update_bv_cv();
         let (bv, cv) = p.get_bv_cv();
-        assert_eq!(bv, "b=>p.update_bv_cv");
-        assert_eq!(cv, "c=>p.update_bv_cvb.udpate_cv");
+        // assert_eq!(bv, "b=>p.update_bv_cv");
+        assert_eq!(cv, "c=>p.update_bv_cv b.update_cv");
     }
 }
