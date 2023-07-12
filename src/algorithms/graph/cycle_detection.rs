@@ -6,17 +6,16 @@ pub trait CycleDetection {
         &self,
         node_id: usize,
         visited: &mut Vec<bool>,
-        rec_stack: &mut Vec<bool>,
+        parent: Option<usize>,
     ) -> bool;
 }
 
 impl CycleDetection for Graph {
     fn has_cycle(&self) -> bool {
         let mut visited = vec![false; self.vertices];
-        let mut rec_stack: Vec<bool> = vec![false; self.vertices];
 
         for v in 0..self.vertices {
-            if self.is_cyclic_util(v, &mut visited, &mut rec_stack) {
+            if self.is_cyclic_util(v, &mut visited, None) {
                 return true;
             }
         }
@@ -28,24 +27,23 @@ impl CycleDetection for Graph {
         &self,
         node_id: usize,
         visited: &mut Vec<bool>,
-        rec_stack: &mut Vec<bool>,
+        parent: Option<usize>,
     ) -> bool {
         if !visited[node_id] {
             visited[node_id] = true;
-            rec_stack[node_id] = true;
 
             for &adj_vertex in &self.adj_list[node_id] {
                 if !visited[adj_vertex] {
-                    if self.is_cyclic_util(adj_vertex, visited, rec_stack) {
+                    if self.is_cyclic_util(adj_vertex, visited, Some(node_id)) {
                         return true;
                     }
-                } else if rec_stack[adj_vertex] {
+                } else if parent.is_some_and(|val| !self.adj_list[node_id].contains(&val))  {
                     return true;
                 }
             }
+
         }
 
-        rec_stack[node_id] = false;
         false
     }
 }
@@ -62,6 +60,7 @@ mod cyclic_check_1_tests {
         graph.add_edge(2, 0);
         graph.add_edge(2, 3);
 
+        println!("{:?}", graph);
         assert!(graph.has_cycle());
     }
 
@@ -70,6 +69,8 @@ mod cyclic_check_1_tests {
         let mut graph = Graph::new(4);
         graph.add_edge(0, 1);
         graph.add_edge(1, 2);
+
+        println!("{:?}", graph);
 
         assert!(!graph.has_cycle());
     }

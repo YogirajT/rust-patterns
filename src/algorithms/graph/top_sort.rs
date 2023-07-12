@@ -39,7 +39,6 @@ pub fn find_order(num_courses: i32, prerequisites: Vec<Vec<i32>>) -> Vec<i32> {
     let mut graph: HashMap<i32, Vec<i32>> = HashMap::new();
     let mut in_degree: Vec<i32> = vec![0; num_courses as usize];
 
-    // Build the graph and calculate in-degrees
     for prerequisite in prerequisites.iter() {
         let course = prerequisite[0];
         let prereq = prerequisite[1];

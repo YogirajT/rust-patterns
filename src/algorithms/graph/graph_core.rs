@@ -1,4 +1,6 @@
 #[allow(dead_code)]
+
+#[derive(Debug)]
 pub struct Graph {
     pub vertices: usize,
     pub adj_list: Vec<Vec<usize>>,
