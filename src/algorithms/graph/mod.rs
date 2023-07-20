@@ -9,4 +9,4 @@ pub mod floyd_warshall;
 pub mod fibo_heap;
 pub mod dijkstras;
 pub mod cycle_detection;
-pub mod uniion_find;
+pub mod union_find;
