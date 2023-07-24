@@ -239,11 +239,12 @@ mod smart_pointer_tests {
 
         let mutable_cell = cell_store.get_mut();
 
-        let final_value = 7;
+        let another_value = 7;
 
-        *mutable_cell = final_value;
+        *mutable_cell = another_value;
 
-        assert_eq!(final_value, cell_store.get());
+        assert_eq!(another_value, cell_store.get());
+
     }
 
 }
