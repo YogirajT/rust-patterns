@@ -134,7 +134,7 @@ struct B {
 
 #[cfg(test)]
 mod smart_pointer_tests {
-    use std::cell::RefCell;
+    use std::cell::{RefCell, Cell};
 
     use super::*;
 
@@ -205,4 +205,27 @@ mod smart_pointer_tests {
         // assert_eq!(bv, "b=>p.update_bv_cv");
         assert_eq!(cv, "c=>p.update_bv_cv b.update_cv");
     }
+
+    #[test]
+    fn cell_test() {
+
+        let val = 42;
+
+        let cell_store = Cell::new(val);
+
+        assert_eq!(val, cell_store.get());
+
+        let updated_val = 100;
+
+        let previous_val = cell_store.replace(updated_val);
+
+        assert_eq!(updated_val, cell_store.get());
+
+        assert_eq!(previous_val, val);
+
+        let final_val = cell_store.set(previous_val);
+
+        assert_eq!(val, cell_store.get());
+    }
+
 }
