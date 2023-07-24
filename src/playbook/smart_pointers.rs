@@ -211,7 +211,7 @@ mod smart_pointer_tests {
 
         let val = 42;
 
-        let cell_store = Cell::new(val);
+        let mut cell_store = Cell::new(val);
 
         assert_eq!(val, cell_store.get());
 
@@ -223,9 +223,27 @@ mod smart_pointer_tests {
 
         assert_eq!(previous_val, val);
 
-        let final_val = cell_store.set(previous_val);
+        cell_store.set(previous_val);
 
         assert_eq!(val, cell_store.get());
+
+        let cell_ptr = cell_store.as_ptr();
+
+        let unsafe_val = 6;
+
+        unsafe {
+            *cell_ptr = unsafe_val;
+        }
+
+        assert_eq!(unsafe_val, cell_store.get());
+
+        let mutable_cell = cell_store.get_mut();
+
+        let final_value = 7;
+
+        *mutable_cell = final_value;
+
+        assert_eq!(final_value, cell_store.get());
     }
 
 }
