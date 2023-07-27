@@ -239,12 +239,26 @@ mod smart_pointer_tests {
 
         let mutable_cell = cell_store.get_mut();
 
-        let another_value = 7;
+        let mut another_value = 7;
 
         *mutable_cell = another_value;
 
         assert_eq!(another_value, cell_store.get());
 
+        let inner_val = cell_store.into_inner();
+
+        another_value = 1;
+
+        assert_eq!(7, inner_val);
+        assert_eq!(1, another_value);
+
+        // Following line will cause error because into_inner() moved the value
+        // cell_store.get();
+
     }
 
+    #[test]
+    fn refcell_test() {
+
+    }
 }
