@@ -254,7 +254,7 @@ mod smart_pointer_tests {
 
         // Following line will cause error because into_inner() moved the value
         // cell_store.get();
-
+                                                                                                                                
     }
 
     #[test]

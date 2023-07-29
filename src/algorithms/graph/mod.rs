@@ -10,3 +10,4 @@ pub mod fibo_heap;
 pub mod dijkstras;
 pub mod cycle_detection;
 pub mod union_find;
+pub mod prims;
