@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-fn longest_palindrome_by_expansion(input: &str) -> Option<&str> {
+fn longest_palindrome_by_expansion(input: &str) -> String {
     let input_len = input.len();
     let mut start = 0;
     let mut end = 1;
@@ -37,7 +37,8 @@ fn longest_palindrome_by_expansion(input: &str) -> Option<&str> {
         }
     }
 
-    return input.get(start as usize..end as usize - 1);
+    input.chars().skip(start as usize).take((end) as usize).collect::<String>()
+
 }
 
 #[cfg(test)]
@@ -45,11 +46,39 @@ mod palindrome_tests {
     use super::*;
 
     #[test]
-    fn test_expansion_palindrome() {
+    fn test_expansion_palindrome_odd() {
         let test_string = "racecar".to_owned();
 
-        let answer = longest_palindrome_by_expansion(&test_string).unwrap();
+        let answer = longest_palindrome_by_expansion(&test_string);
 
         assert_eq!("racecar", answer);
+    }
+
+    #[test]
+    fn test_expansion_palindrome_even() {
+        let test_string = "cabbad".to_owned();
+
+        let answer = longest_palindrome_by_expansion(&test_string);
+
+        assert_eq!("abba", answer);
+    }
+
+
+    #[test]
+    fn test_expansion_palindrome_mix() {
+        let test_string = "cabbadracecar".to_owned();
+
+        let answer = longest_palindrome_by_expansion(&test_string);
+
+        assert_eq!("racecar", answer);
+    }
+
+    #[test]
+    fn test_expansion_palindrome_negative() {
+        let test_string = "asdf".to_owned();
+
+        let answer = longest_palindrome_by_expansion(&test_string);
+
+        assert_eq!("a", answer);
     }
 }
