@@ -1,3 +1,9 @@
+// The Visitor pattern is used in software development when you need to add new operations 
+// to a group of objects without modifying their classes. It is particularly useful in situations 
+// where the structure of an object hierarchy is fixed, but the operations that can be performed 
+// on these objects are subject to change.
+
+
 #![allow(dead_code)]
 
 trait Visitor {
