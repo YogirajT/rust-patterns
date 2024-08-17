@@ -52,7 +52,7 @@ impl WomboCombo for FoxCombo {
 
 
 #[cfg(test)]
-mod visitor_tests {
+mod template_method_tests {
     use super::*;
 
     #[test]
